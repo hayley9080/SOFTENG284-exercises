@@ -13,20 +13,20 @@ public class Tree {
    * @param key the key to check
    * @return true if the key is in the tree, false otherwise
    */
-  public boolean contains(int key) {
-    Node current = root;
-    while (current != null) {
-      if (current.key == key) {
-        return true;
-
-      } else if (current.key > key) {
-        current = current.left;
-
-      } else {
-        current = current.right;
-      }
+  public boolean contains(Node current, int key) {
+    if (current == null) {
+      return false;
     }
-    return false;
+
+    if (current.key == key) {
+      return true;
+
+    } else if (current.key > key) {
+      return contains(current.left, key);
+
+    } else {
+      return contains(current.right, key);
+    }
   }
 
   /**
@@ -65,7 +65,7 @@ public class Tree {
    *
    * @param node the node to rotate
    */
-  public void rotateLeft(Node node) {
+  public Node rotateLeft(Node node) {
     Node right = node.right;
     Node rightLeft = right.left;
 
@@ -74,6 +74,7 @@ public class Tree {
 
     node.height();
     right.height();
+    return right;
   }
 
   /**
@@ -86,7 +87,7 @@ public class Tree {
    *
    * @param node the node to rotate
    */
-  public void rotateRight(Node node) {
+  public Node rotateRight(Node node) {
     Node left = node.left;
     Node leftRight = left.right;
 
@@ -95,6 +96,7 @@ public class Tree {
 
     node.height();
     left.height();
+    return left;
   }
 
   /**
@@ -102,26 +104,29 @@ public class Tree {
    *
    * @param node the node to rotate
    */
-  public void rotate(Node node) {
+  public Node rotate(Node node) {
     int balance = balance(node);
     // left heavy
     if (balance > 1) {
       // left is right heavy
       if (balance(node.left) < 0) {
-        rotateLeft(node.left);
+        node.left = rotateLeft(node.left);
       }
-      rotateRight(node);
+      node = rotateRight(node);
     }
     // right heavy
     else if (balance < -1) {
       // right is left heavy
       if (balance(node.right) > 0) {
-        rotateRight(node.right);
+        node.right = rotateRight(node.right);
       }
-      rotateLeft(node);
-    } else {
-      return;
+      node = rotateLeft(node);
     }
+    return node;
+  }
+
+  public void add(int key) {
+    root = addRecursive(root, key);
   }
 
   /**
@@ -129,45 +134,44 @@ public class Tree {
    *
    * @param key the key to add
    */
-  public void add(Node current, int key) {
+  public Node addRecursive(Node current, int key) {
     Node newNode = new Node(key);
     if (root == null) {
       root = newNode;
-      return;
+      return root;
     }
     // root is larger than key - go left
     if (current.key > key) {
       if (current.left == null) {
         current.left = newNode;
       } else {
-        add(current.left, key);
+        current.left = addRecursive(current.left, key);
       }
+
       // key is larger than root - go right
     } else if (current.key < key) {
       if (current.right == null) {
         current.right = newNode;
       } else {
-        add(current.right, key);
+        current.right = addRecursive(current.right, key);
       }
-      // key is already in tree
-    } else {
-      return;
     }
 
     current.height();
-    rotate(current);
+    return rotate(current);
   }
 
   public static void main(String[] args) {
     Tree tree = new Tree();
     int n = 1000000;
     for (int i = 0; i < n; i++) {
-      tree.add(tree.root, i);
-      tree.add(tree.root, -i);
+      tree.add(i);
+      tree.add(-i);
     }
     for (int i = 0; i < n; i++) {
-      tree.contains(n - 1);
-      tree.contains(-n + 1);
+      tree.contains(tree.root, n - 1);
+      tree.contains(tree.root, -n + 1);
     }
+    System.out.println("Done");
   }
 }
