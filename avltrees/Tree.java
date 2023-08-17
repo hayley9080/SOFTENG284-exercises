@@ -169,8 +169,11 @@ public class Tree {
       tree.add(-i);
     }
     for (int i = 0; i < n; i++) {
-      tree.contains(tree.root, n - 1);
-      tree.contains(tree.root, -n + 1);
+      boolean x = tree.contains(tree.root, n - 1);
+      boolean y = tree.contains(tree.root, -n + 1);
+      if (!x || !y) {
+        System.out.println("Error");
+      }
     }
     System.out.println("Done");
   }
