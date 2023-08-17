@@ -54,4 +54,69 @@ public class Tree {
 
     return leftHeight - rightHeight;
   }
+
+  /**
+   * rotateLeft is used when the right subtree is heavier than the left subtree.
+   *
+   * <p>Moves the inputted node to the left child of the right child of the inputted node. The left
+   * child of the right child of the inputted node becomes the right child of the inputted node.
+   * Therefore the right child becomes the parent of the inputted node. This therefore rotates the
+   * inputted node to the left.
+   *
+   * @param node the node to rotate
+   */
+  public void rotateLeft(Node node) {
+    Node right = node.right;
+    Node rightLeft = right.left;
+
+    right.left = node;
+    node.right = rightLeft;
+
+    node.height();
+    right.height();
+  }
+
+  /**
+   * rotateRight is used when the left subtree is heavier than the right subtree.
+   *
+   * <p>Moves the inputted node to the right child of the left child of the inputted node. The right
+   * child of the left child of the inputted node becomes the left child of the inputted node.
+   * Therefore the left child becomes the parent of the inputted node. This therefore rotates the
+   * inputted node to the right.
+   *
+   * @param node the node to rotate
+   */
+  public void rotateRight(Node node) {
+    Node left = node.left;
+    Node leftRight = left.right;
+
+    left.right = node;
+    node.left = leftRight;
+
+    node.height();
+    left.height();
+  }
+
+  /**
+   * rotate is used to rotate a node to the left or right depending on the balance of the node.
+   *
+   * @param node the node to rotate
+   */
+  public void rotate(Node node) {
+    int balance = balance(node);
+    // left heavy
+    if (balance > 1) {
+      if (balance(node.left) < 0) {
+        rotateLeft(node.left);
+      }
+      rotateRight(node);
+    }
+    // right heavy
+    else if (balance < -1) {
+      if (balance(node.right) > 0) {
+        rotateRight(node.right);
+      }
+      rotateLeft(node);
+    }
+  }
 }
