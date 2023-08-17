@@ -106,6 +106,7 @@ public class Tree {
     int balance = balance(node);
     // left heavy
     if (balance > 1) {
+      // left is right heavy
       if (balance(node.left) < 0) {
         rotateLeft(node.left);
       }
@@ -113,10 +114,60 @@ public class Tree {
     }
     // right heavy
     else if (balance < -1) {
+      // right is left heavy
       if (balance(node.right) > 0) {
         rotateRight(node.right);
       }
       rotateLeft(node);
+    } else {
+      return;
+    }
+  }
+
+  /**
+   * add is used to add a key into the tree recursively.
+   *
+   * @param key the key to add
+   */
+  public void add(Node current, int key) {
+    Node newNode = new Node(key);
+    if (root == null) {
+      root = newNode;
+      return;
+    }
+    // root is larger than key - go left
+    if (current.key > key) {
+      if (current.left == null) {
+        current.left = newNode;
+      } else {
+        add(current.left, key);
+      }
+      // key is larger than root - go right
+    } else if (current.key < key) {
+      if (current.right == null) {
+        current.right = newNode;
+      } else {
+        add(current.right, key);
+      }
+      // key is already in tree
+    } else {
+      return;
+    }
+
+    current.height();
+    rotate(current);
+  }
+
+  public static void main(String[] args) {
+    Tree tree = new Tree();
+    int n = 1000000;
+    for (int i = 0; i < n; i++) {
+      tree.add(tree.root, i);
+      tree.add(tree.root, -i);
+    }
+    for (int i = 0; i < n; i++) {
+      tree.contains(n - 1);
+      tree.contains(-n + 1);
     }
   }
 }
